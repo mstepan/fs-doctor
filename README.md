@@ -1,8 +1,9 @@
 # FS Doctor CLI tool
 
-* written in java
-* compiled to native executable using GraalVM
-* use [picocli](https://picocli.info/) under the hood
+* Written in `Java 23`
+* Maven `v3.9.9` with the [wrapper](https://maven.apache.org/wrapper/)
+* Compiled to native executable using [GraalVM](https://www.graalvm.org/)
+* Uses [picocli](https://picocli.info/) under the hood
 
 ## Build & run
 
