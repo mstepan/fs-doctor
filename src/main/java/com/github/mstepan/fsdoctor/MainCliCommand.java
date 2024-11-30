@@ -24,7 +24,7 @@ import picocli.CommandLine.Parameters;
         mixinStandardHelpOptions = true,
         version = "fs-doctor 1.0.0",
         description = "Calculate folder size and output to STDOUT.")
-class FolderSizeCalculationCommand implements Callable<Integer> {
+class MainCliCommand implements Callable<Integer> {
 
     @Parameters(index = "0", description = "The base folder.")
     private Path baseFolder;

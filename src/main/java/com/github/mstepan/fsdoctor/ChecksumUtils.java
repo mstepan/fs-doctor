@@ -1,25 +1,29 @@
 package com.github.mstepan.fsdoctor;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
-public final class ChecksumUtils {
+final class ChecksumUtils {
 
+    /** MessageDigest NOT thread safe so we should use ThreadLocal */
     private static final ThreadLocal<MessageDigest> LOCAL_DIGEST =
-            new ThreadLocal<>() {
-                @Override
-                protected MessageDigest initialValue() {
-                    try {
-                        return MessageDigest.getInstance("SHA256");
-                    } catch (NoSuchAlgorithmException ex) {
-                        throw new ExceptionInInitializerError(ex);
-                    }
-                }
-            };
+            ThreadLocal.withInitial(
+                    () -> {
+                        try {
+                            return MessageDigest.getInstance("SHA256");
+                        } catch (NoSuchAlgorithmException ex) {
+                            throw new ExceptionInInitializerError(ex);
+                        }
+                    });
+
+    private static final ThreadLocal<byte[]> LOCAL_BUF =
+            ThreadLocal.withInitial(() -> new byte[4096]);
 
     private ChecksumUtils() {
         throw new AssertionError("Can't instantiate utility-ony class");
@@ -31,7 +35,7 @@ public final class ChecksumUtils {
      * <p>'shasum -a 256 <file_name>' =>
      * 'd65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3'
      */
-    public static String fileChecksum(Path filePath) {
+    static String fileChecksum(Path filePath) {
         Objects.requireNonNull(filePath, "null 'filePath' parameter detected");
 
         if (!Files.exists(filePath)) {
@@ -39,12 +43,23 @@ public final class ChecksumUtils {
         }
 
         try {
-            byte[] checksum = LOCAL_DIGEST.get().digest(Files.readAllBytes(filePath));
+            final MessageDigest fileDigest = LOCAL_DIGEST.get();
+            final byte[] buffer = LOCAL_BUF.get();
+
+            try (InputStream fileIn = Files.newInputStream(filePath);
+                    BufferedInputStream in = new BufferedInputStream(fileIn)) {
+                int readBytesCnt;
+                while ((readBytesCnt = in.read(buffer)) > 0) {
+                    fileDigest.update(buffer, 0, readBytesCnt);
+                }
+            }
+
+            byte[] checksum = fileDigest.digest();
             assert checksum.length > 0;
             return toHexStr(checksum);
         } catch (IOException ex) {
             throw new IllegalStateException(
-                    "Can't calculate checksum from file: '%s'".formatted(filePath), ex);
+                    "Can't calculate checksum for file: '%s'".formatted(filePath), ex);
         }
     }
 
