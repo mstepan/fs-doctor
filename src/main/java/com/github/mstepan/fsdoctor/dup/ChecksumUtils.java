@@ -1,4 +1,4 @@
-package com.github.mstepan.fsdoctor;
+package com.github.mstepan.fsdoctor.dup;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
