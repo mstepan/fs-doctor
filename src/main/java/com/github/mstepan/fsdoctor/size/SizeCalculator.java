@@ -1,12 +1,12 @@
 package com.github.mstepan.fsdoctor.size;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import static java.nio.file.FileVisitResult.CONTINUE;
 
 public final class SizeCalculator extends SimpleFileVisitor<Path> {
 
@@ -27,7 +27,7 @@ public final class SizeCalculator extends SimpleFileVisitor<Path> {
         return CONTINUE;
     }
 
-    public long size(){
+    public long size() {
         return size;
     }
 }

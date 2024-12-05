@@ -1,5 +1,7 @@
 package com.github.mstepan.fsdoctor.dup;
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
@@ -9,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.nio.file.FileVisitResult.CONTINUE;
 
 public final class DuplicatesFinder extends SimpleFileVisitor<Path> {
 

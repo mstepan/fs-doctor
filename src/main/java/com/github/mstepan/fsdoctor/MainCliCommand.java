@@ -1,14 +1,13 @@
 package com.github.mstepan.fsdoctor;
 
+import com.github.mstepan.fsdoctor.dup.DuplicatesFinder;
+import com.github.mstepan.fsdoctor.size.DirSize;
+import com.github.mstepan.fsdoctor.size.SizeCalculator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
-import com.github.mstepan.fsdoctor.dup.DuplicatesFinder;
-import com.github.mstepan.fsdoctor.size.DirSize;
-import com.github.mstepan.fsdoctor.size.SizeCalculator;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
