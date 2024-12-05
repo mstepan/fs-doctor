@@ -6,6 +6,9 @@
 # Maven target folder
 target
 
+# Maven shaded plugin generated file
+dependency-reduced-pom.xml
+
 # IntelliJ IDEA files
 .idea
 *.iml
@@ -16,8 +19,6 @@ target
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# ignore write-ahead log data folder
-data
 
 # MacOS caches files
 .DS_Store

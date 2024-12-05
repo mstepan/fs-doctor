@@ -21,12 +21,16 @@ java -jar target/fs-doctor-0.0.1-SNAPSHOT.jar
 
 ### Native image
 
-* build native image using maven `native` profile
+* Build native image using maven `native` profile
+
+If you're using Windows make sure to have installed [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/).
+It's required to compile native images.
+
 ```bash
 mvn clean package -Pnative
 ```
 
-* run native executable
+* Run native executable
 ```bash
 ./target/fs-doctor
 ```

@@ -45,6 +45,30 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <!-- Create uber jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <transformers>
+                                <!-- Adds the Main-Class entry to the manifest -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.github.mstepan.fsdoctor.FsDoctorMain</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
