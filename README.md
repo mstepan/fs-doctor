@@ -9,7 +9,7 @@
 
 ### Standard maven
 
-* build self-executable jar file
+* Build self-executable jar file
 ```bash
 mvn clean package
 ```
@@ -31,6 +31,7 @@ mvn clean package -Pnative
 ```
 
 * Run native executable
-```bash
-./target/fs-doctor
+```
+./target/fs-doctor <-- for Unix
+./target/fs-doctor.exe <-- for Windows
 ```
