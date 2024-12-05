@@ -9,15 +9,29 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Java version -->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <native.maven.plugin.version>0.10.2</native.maven.plugin.version>
+
+        <!-- 3rd party dependencies -->
         <picocli.version>4.7.6</picocli.version>
+
+        <!--
+        GraalVM native tools
+        https://graalvm.github.io/native-build-tools/latest/index.html
+        -->
+        <native.maven.plugin.version>0.10.2</native.maven.plugin.version>
 
         <!-- Spotless code formatting -->
         <spotless.plugin.version>2.37.0</spotless.plugin.version>
         <google.java.format.version>1.17.0</google.java.format.version>
 
+        <!-- Maven other plugins -->
+        <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
+        <maven.shaded.plugin.version>3.6.0</maven.shaded.plugin.version>
     </properties>
 
     <build>
@@ -58,7 +72,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <fork>true</fork>
                     <annotationProcessorPaths>
@@ -73,7 +87,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven.jar.plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -88,7 +102,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven.shaded.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
