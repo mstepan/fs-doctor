@@ -35,3 +35,9 @@ mvn clean package -Pnative
 ./target/fs-doctor <-- for Unix
 ./target/fs-doctor.exe <-- for Windows
 ```
+
+* Run OWASP dependency checker
+```bash
+export NVD_API_KEY=<nvd-API-key>
+    ./mvnw org.owasp:dependency-check-maven:check
+```
