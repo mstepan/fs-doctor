@@ -4,6 +4,7 @@
 * Maven `v3.9.9` with the [wrapper](https://maven.apache.org/wrapper/)
 * Compiled to native executable using [GraalVM](https://www.graalvm.org/)
 * Uses [picocli](https://picocli.info/) under the hood
+* Uses [virtual threads](https://docs.oracle.com/en/java/javase/23/core/virtual-threads.html) and [structured concurrency](https://docs.oracle.com/en/java/javase/23/core/structured-concurrency.html)
 
 ## Build & run
 
@@ -15,6 +16,9 @@ mvn clean package
 ```
 
 * Run application (sequential/parallel)
+Pay attention that we also need to provide `--enable-preview` during runtime because we have used 
+[Structured Concurrency](https://docs.oracle.com/en/java/javase/23/core/structured-concurrency.html) which is in 
+a preview mode for java 23.
 ```bash
 java --enable-preview -jar target/fs-doctor-0.0.1-SNAPSHOT.jar . --dup
 java --enable-preview -jar target/fs-doctor-0.0.1-SNAPSHOT.jar . --dup -p
@@ -33,10 +37,13 @@ mvn clean package -Pnative
 
 * Run native executable (Unix/Windows)
 ```bash
-./target/fs-doctor . --dup
-./target/fs-doctor.exe . --dup
+./target/fs-doctor . --dup -p
+./target/fs-doctor.exe . --dup -p
 ```
 
+## Quality checks
+
+### OWASP check dependencies for vulnerabilities
 * Run OWASP dependency checker
 ```bash
 ./mvnw org.owasp:dependency-check-maven:check

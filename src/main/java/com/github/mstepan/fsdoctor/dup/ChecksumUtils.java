@@ -8,26 +8,31 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 public final class ChecksumUtils {
 
     private static final AtomicLong digestInstancesCount = new AtomicLong();
 
-    /** MessageDigest NOT thread safe so we should use ThreadLocal */
-    private static final ThreadLocal<MessageDigest> LOCAL_DIGEST =
-            ThreadLocal.withInitial(
-                    () -> {
-                        try {
-                            digestInstancesCount.incrementAndGet();
-                            return MessageDigest.getInstance("SHA256");
-                        } catch (NoSuchAlgorithmException ex) {
-                            throw new ExceptionInInitializerError(ex);
-                        }
-                    });
+    private static final int DIGEST_POOL_CAPACITY = Runtime.getRuntime().availableProcessors();
 
-    private static final ThreadLocal<byte[]> LOCAL_BUF =
-            ThreadLocal.withInitial(() -> new byte[4096]);
+    /** The MessageDigest class is NOT thread safe so we should do pooling */
+    private static final BlockingQueue<MessageDigest> DIGEST_POOL =
+            new ArrayBlockingQueue<>(DIGEST_POOL_CAPACITY);
+
+    static {
+        //        System.out.printf("DIGEST_POOL_CAPACITY: %d\n", DIGEST_POOL_CAPACITY);
+        for (int i = 0; i < DIGEST_POOL_CAPACITY; ++i) {
+            try {
+                DIGEST_POOL.add(MessageDigest.getInstance("SHA256"));
+                digestInstancesCount.incrementAndGet();
+            } catch (NoSuchAlgorithmException ex) {
+                throw new ExceptionInInitializerError(ex);
+            }
+        }
+    }
 
     private ChecksumUtils() {
         throw new AssertionError("Can't instantiate utility-ony class");
@@ -51,8 +56,21 @@ public final class ChecksumUtils {
         }
 
         try {
-            final MessageDigest fileDigest = LOCAL_DIGEST.get();
-            final byte[] buffer = LOCAL_BUF.get();
+            byte[] digest = calculateDigest(filePath);
+            return toHexStr(digest);
+        } catch (InterruptedException interEx) {
+            Thread.currentThread().interrupt();
+            return null;
+        } catch (IOException ex) {
+            throw new IllegalStateException(
+                    "Can't calculate checksum for file: '%s'".formatted(filePath), ex);
+        }
+    }
+
+    private static byte[] calculateDigest(Path filePath) throws InterruptedException, IOException {
+        final MessageDigest fileDigest = DIGEST_POOL.take();
+        try {
+            final byte[] buffer = new byte[4096];
 
             try (InputStream fileIn = Files.newInputStream(filePath);
                     BufferedInputStream in = new BufferedInputStream(fileIn)) {
@@ -62,12 +80,11 @@ public final class ChecksumUtils {
                 }
             }
 
-            byte[] checksum = fileDigest.digest();
-            assert checksum.length > 0;
-            return toHexStr(checksum);
-        } catch (IOException ex) {
-            throw new IllegalStateException(
-                    "Can't calculate checksum for file: '%s'".formatted(filePath), ex);
+            byte[] digest = fileDigest.digest();
+            assert digest.length > 0;
+            return digest;
+        } finally {
+            DIGEST_POOL.add(fileDigest);
         }
     }
 
