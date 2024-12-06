@@ -8,14 +8,18 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
-final class ChecksumUtils {
+public final class ChecksumUtils {
+
+    private static final AtomicLong digestInstancesCount = new AtomicLong();
 
     /** MessageDigest NOT thread safe so we should use ThreadLocal */
     private static final ThreadLocal<MessageDigest> LOCAL_DIGEST =
             ThreadLocal.withInitial(
                     () -> {
                         try {
+                            digestInstancesCount.incrementAndGet();
                             return MessageDigest.getInstance("SHA256");
                         } catch (NoSuchAlgorithmException ex) {
                             throw new ExceptionInInitializerError(ex);
@@ -27,6 +31,10 @@ final class ChecksumUtils {
 
     private ChecksumUtils() {
         throw new AssertionError("Can't instantiate utility-ony class");
+    }
+
+    public static long digestInstancesCount() {
+        return digestInstancesCount.get();
     }
 
     /**

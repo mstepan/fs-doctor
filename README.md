@@ -14,9 +14,10 @@
 mvn clean package
 ```
 
-* Run application
+* Run application (sequential/parallel)
 ```bash
-java -jar target/fs-doctor-0.0.1-SNAPSHOT.jar
+java --enable-preview -jar target/fs-doctor-0.0.1-SNAPSHOT.jar . --dup
+java --enable-preview -jar target/fs-doctor-0.0.1-SNAPSHOT.jar . --dup -p
 ```
 
 ### Native image
@@ -30,14 +31,13 @@ It's required to compile native images.
 mvn clean package -Pnative
 ```
 
-* Run native executable
-```
-./target/fs-doctor <-- for Unix
-./target/fs-doctor.exe <-- for Windows
+* Run native executable (Unix/Windows)
+```bash
+./target/fs-doctor . --dup
+./target/fs-doctor.exe . --dup
 ```
 
 * Run OWASP dependency checker
 ```bash
-export NVD_API_KEY=<nvd-API-key>
-    ./mvnw org.owasp:dependency-check-maven:check
+./mvnw org.owasp:dependency-check-maven:check
 ```
