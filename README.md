@@ -12,7 +12,7 @@
 
 * Build self-executable jar file
 ```bash
-mvn clean package
+./mvnw clean package
 ```
 
 * Run application (sequential/parallel)
@@ -32,7 +32,7 @@ If you're using Windows make sure to have installed [Visual Studio 2022](https:/
 It's required to compile native images.
 
 ```bash
-mvn clean package -Pnative
+./mvnw clean package -Pnative
 ```
 
 * Run native executable (Unix/Windows)
@@ -44,7 +44,11 @@ mvn clean package -Pnative
 ## Quality checks
 
 ### OWASP check dependencies for vulnerabilities
-* Run OWASP dependency checker
+* Run OWASP dependency checker. The OWASP checker attached to `check` maven phase that can be triggered using below
+  command:
+
 ```bash
-./mvnw org.owasp:dependency-check-maven:check
+./mvnw verify
 ```
+
+./mvnw org.owasp:dependency-check-maven:purge
